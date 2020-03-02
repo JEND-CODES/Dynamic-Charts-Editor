@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang='fr'>
+
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="myCharts">
+    <meta content='width=device-width, initial-scale=1.0' name='viewport' />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="FaviconMyCharts.png" />
+
+    <title>myCharts</title>
+
+    <!-- Bootsrap Min Css -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <!-- Polices du site -->
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:400,700&display=swap" rel="stylesheet">
+
+    <!-- Fontawesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+    <style type="text/css">
+        @import url('https://fonts.googleapis.com/css?family=Quicksand:400,700&display=swap');
+
+        /* Attention j'ai ajouté un padding au body pour resserrer les Input itérés après le choix du nombre de colonnes à éditer pour un nouveau graph */
+        body {
+            font-family: 'Quicksand', sans-serif;
+            color: #333333;
+            padding: 20px;
+            margin: 0 auto;
+            overflow-x: hidden;
+            text-align: center;
+
+        }
+
+        .the-logo {
+            font-family: 'Quicksand', sans-serif;
+            color: #01767c;
+            font-size: 30px;
+            font-weight: bold;
+            /*
+            -webkit-text-stroke: 0px grey;
+            */
+        }
+
+        .logo-img {
+            width: 45px;
+            position: absolute;
+            margin-top: 24px;
+            margin-left: -5px;
+            z-index: -1;
+        }
+
+        /* ContainerDOM -> export to JPEG format */
+        #containerDOM {
+            background: white;
+        }
+
+        .highcharts-tooltip-box {
+            fill: white;
+            fill-opacity: 1;
+
+        }
+
+        .chart_begins_box {
+            text-align: center;
+        }
+
+        .chart_options_box {
+            text-align: left;
+        }
+
+        .chart_options_box_2 {
+            text-align: center;
+
+        }
+
+        .notes {
+            text-align: center;
+            margin: 1px !important;
+            border: 1px solid #ccc !important;
+            transition: 0.5s !important;
+            box-sizing: border-box !important;
+            outline: none !important;
+        }
+
+        .notes:focus {
+            border: 1px solid #555 !important;
+        }
+
+        .btn {
+            margin: 4px !important;
+        }
+
+        .btn:focus {
+            box-shadow: none !important;
+        }
+
+        /*
+        .highcharts-data-label-box {
+            fill: #a4edba;
+            stroke: gray;
+            stroke-width: 1px;
+        }
+
+        .highcharts-data-label {
+            font-weight: normal;
+        }
+
+        .highlight .highcharts-data-label-box {
+            fill: red;
+            stroke-width: 2px;
+            stroke: black;
+        }
+
+        .highlight.highcharts-data-label text {
+            font-weight: bold;
+            fill: white;
+        }
+*/
+
+        input[type=text] {
+            width: 190px !important;
+            padding: 8px 12px !important;
+            margin: 0 !important;
+            border: 1px solid #ccc !important;
+            border-radius: 20px !important;
+            box-sizing: border-box !important;
+
+            transition: 0.5s !important;
+            outline: none !important;
+
+
+        }
+
+        select {
+            width: 70px !important;
+            cursor: pointer;
+            padding: 4px 6px !important;
+            margin-left: 18px !important;
+            border: 1px solid #ccc !important;
+            border-radius: 20px !important;
+            box-sizing: border-box !important;
+            transition: 0.5s !important;
+            outline: none !important;
+            overflow: hidden !important;
+
+        }
+
+        input[type=text]:focus {
+            border: 1px solid #555 !important;
+        }
+
+        select:focus {
+            border: 1px solid #555 !important;
+        }
+
+        @media all and (max-width:700px) {
+            input[type=text] {
+                width: 100% !important;
+            }
+            select {
+           
+                 margin-left: 0px !important;
+            }
+        }
+
+        .simple-line {
+            width: 80%;
+        }
+
+    </style>
+
+</head>
+
+<body>
+    <a href="http://mycharts.planetcode.fr" title="Éditeur dynamique de graphiques" style="text-decoration: none;">
+        <p class="the-logo"><span style="color:#17a2b8;">my</span>Charts<img class="logo-img" src="newLogoMyCharts2.png" alt="Dynamic charts" title="Dynamic charts" /></p>
+    </a>
+
+    <p style="position:absolute;top:10px;right:10px;font-size:12px;">&copy;&nbsp;<a href="http://portfolio.planetcode.fr/" target="_blank" title="Réalisation : Jean-Eudes Nouaille-Degorce" style="text-decoration: none;color:grey;">Planetcode.fr</a></p>
+
+    <div class="positioner" style="width:100%;height:1px;background:transparent;margin-top:-20px;">
+    </div>
+
+    <div class="container">
+
+        <!-- Export JPEG button : voir : https://github.com/tsayen/dom-to-image *** and *** https://codepen.io/yashwant/pen/oBvJKK?editors=1010 -->
+
+        <!-- <button class="button-export" style="float:right;">Download JPEG</button> -->
+
+        <div class="container chart_begins_box">
+            <div class="row">
+                <div class="col-sm-12 col-md-4">
+
+                </div>
+                <div class="col-sm-12 col-md-4 other">
+
+
+                    <br />
+                    <br />
+                    <!-- Nombre de colonnes à éditer ? -->
+                    <label>Nombre de colonnes ?</label>
+                    <select id="text1" name="charts" form="charts_form"></select>
+
+                    <!-- Input masqué qui définit les catégories par défaut -->
+                    <input type="text" id="text5" placeholder="Noms des catégories" value="1 2 3" />
+
+                    <br />
+                    <br />
+
+                    <button id="button1" class="btn btn-info" value="Start !" onclick="display_array();" style="border-radius:16px !important;"><i class="fas fa-chart-pie"></i>&nbsp;&nbsp;Start !</button>
+
+                </div>
+                <div class="col-sm-12 col-md-4 other">
+
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Ce containerDOM définit l'élément à exporter en JPEG (cf. dom-to-image.js) -->
+        <div id="containerDOM">
+
+        </div>
+
+
+        <div class="container chart_options_box">
+
+            <br />
+            <input type="text" id="main-title-input" placeholder="Titre du graphique" />
+
+            &nbsp;&nbsp;
+
+            <input type="text" id="x-axis-input" placeholder="Légende axe X" />
+
+            &nbsp;&nbsp;
+            <input type="text" id="y-axis-input" placeholder="Légende axe Y" />
+
+            &nbsp;&nbsp;
+            <input type="text" id="categ_input" placeholder="Noms des catégories" />
+
+            &nbsp;&nbsp;
+            <input type="text" id="value_suffix_input" placeholder="Valeur des données" />
+
+            <!-- Button to refresh fields -->
+            <button id="refresh-all" class="btn btn-outline-info btn-sm" style="margin:10px !important;"><i class="fas fa-redo-alt"></i></button>
+
+            <br />
+
+
+            <div class="row chart_options_box_2">
+                <div class="col-sm-12 col-md-12" style="border:0px solid #dcdcdc;padding:10px;">
+
+                    <button id="change_line" class="btn btn-outline-info btn-sm">Ligne</button>
+
+                    <button id="change_spline" class="btn btn-outline-info btn-sm">Courbe</button>
+
+                    <button id="change_areaspline" class="btn btn-outline-info btn-sm">Zone</button>
+
+                    <button id="change_bar" class="btn btn-outline-info btn-sm">Barres</button>
+
+                    <button id="change_column" class="btn btn-outline-info btn-sm">Colonnes</button>
+
+                    <button id="change_scatter" class="btn btn-outline-info btn-sm">Points</button>
+
+                    <button id="change_columnpyramid" class="btn btn-outline-info btn-sm">Pyramides</button>
+
+                    <!-- <button id="change_bubble" class="btn btn-outline-info btn-sm">Bulles</button> -->
+
+                    <button id="change_polygon" class="btn btn-outline-info btn-sm">Polygone</button>
+
+                    <button id="plain" class="btn btn-outline-info btn-sm">Droit</button>
+
+                    <button id="inverted" class="btn btn-outline-info btn-sm">Inversé</button>
+
+                    <button id="toggle-opposite" class="autocompare btn btn-outline-info btn-sm">Opposé</button>
+
+                    <button id="polar" class="btn btn-outline-info btn-sm billy">Polaire</button>
+
+                    <select id="colors-selector" name="colors-names" form="colors-plus" style="width:85px !important;">
+
+                        <option value="#42a5f5">Bleu</option>
+                        <option value="#e57373">Rouge</option>
+                        <option value="#81c784">Vert</option>
+                        <option value="#ba68c8">Violet</option>
+                        <option value="#fff176">Jaune</option>
+                        <option value="#e0e0e0">Gris</option>
+                        <option value="#ffb74d">Orange</option>
+
+                    </select>
+
+                </div>
+            </div>
+        </div>
+
+        <br />
+
+        <div id="container2" style="width: 100%; height: 400px; margin: 0 auto;"></div>
+
+        <div id="container1" style="width: 100%; height: 400px; margin: 0 auto;"></div>
+
+    </div>
+
+
+    <!-- Dernière version du CDN jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- Bootstrap -->
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <!--Highcharts-->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+    <script>
+        $('.logo-img').hide();
+        $('.logo-img').fadeIn(800);
+
+        $('#container2').hide();
+        $('#container2').fadeIn(1000);
+
+        $('.chart_begins_box').hide();
+        $('.chart_begins_box').fadeIn(1000);
+
+        $('.chart_options_box').css('display', 'none');
+
+        $('#container1').css('display', 'none');
+
+        $('#text5').css('display', 'none');
+
+        $("#button1").click(function() {
+
+            $('#button1').css('display', 'none');
+
+            $('#container2').css('display', 'none');
+
+        });
+
+        var $select = $("#text1");
+
+        for (select_items = 2; select_items <= 100; select_items++) {
+
+            $select.append($('<option></option>').val(select_items).html(select_items));
+
+        };
+
+    </script>
+
+    <script>
+        // Fonction qui lance l'affichage du graphique et du nombre de colonnes sélectionnées
+        function display_array() {
+
+            var x = 0;
+            var array = Array();
+
+            array[x] = document.getElementById("text1").value;
+
+            // val5 = document.getElementById("text5").value;
+
+            $('#text1').css('display', 'none');
+            $('#button1').css('display', 'none');
+
+            $('.chart_begins_box').css('display', 'none');
+
+            $('.chart_options_box').hide();
+            $('.chart_options_box').fadeIn(1000);
+            $('.chart_options_box').css('display', 'initial');
+
+            $('#container1').hide();
+            $('#container1').fadeIn(1000);
+            $('#container1').css('display', 'block');
+
+            var e = "";
+
+            for (var y = 0; y < array.length; y++) {
+                e += array[y];
+            }
+
+            const numbering = e;
+
+            const new_numbering = parseInt(numbering);
+
+            const category_names = document.getElementById("text5").value;
+
+            const category_splits = category_names.split(' ');
+
+            const input_fields = [];
+
+            for (var z = 0; z < new_numbering; z++) {
+                input_fields.push("10");
+            }
+
+            const defaultSuffix = ' ';
+
+            const options = {
+                chart: {
+                    // Ce qui marche : line, spline, areaspline, bar, column, scatter, columnpyramid, bubble, polygon, 
+                    type: 'areaspline',
+
+                    // inverted: true,
+
+                    backgroundColor: 'white',
+                    // plotBackgroundImage: 'https://opticalcortex.com/app/uploads/2014/08/grad-670x376.jpg',
+
+                    // Font-family
+                    style: {
+                        fontFamily: 'Quicksand'
+                    }
+                },
+
+                // Changement du Hamburger en bouton rond !
+                /*       
+                                exporting: {
+                                    buttons: {
+                                        contextButton: {
+                                            symbol: 'circle',
+                                            symbolFill: 'blue'
+                                        }
+                                    }
+                                },
+                */
+                navigation: {
+
+                    buttonOptions: {
+                        //enabled: false,
+
+                        // Couleur du Hamburger
+                        symbolStroke: '#17a2b8',
+
+                        theme: {
+
+                            'stroke-width': 0,
+                            stroke: 'white',
+                            fill: 'transparent',
+                            r: 0,
+                            states: {
+
+                                hover: {
+                                    fill: 'transparent',
+                                    cursor: 'pointer',
+
+                                },
+                                select: {
+                                    stroke: 'transparent',
+                                    fill: 'transparent'
+                                }
+                            }
+                        }
+
+                    }
+                },
+                // Retrait du branding Highcharts
+                credits: {
+                    enabled: false,
+                },
+                // Valeur de référence de la série
+                tooltip: {
+                    style: {
+                        color: 'grey',
+                        // fontWeight: 'bold',
+                        fontSize: '12px',
+                    },
+                    formatter: function() {
+                        return this.x + ' : ' + this.y + ' ' + defaultSuffix;
+
+                    },
+                    // valueSuffix: '$',
+                },
+
+                colors: ['#42a5f5'],
+
+                title: {
+                    text: ' ',
+                    style: {
+                        color: 'grey',
+                        fontSize: '16px'
+                    }
+                },
+
+                xAxis: {
+
+                    labels: {
+                        style: {
+                            color: 'grey',
+                            fontSize: '14px'
+                        }
+                    },
+                    title: {
+                        text: ' ',
+                        style: {
+                            color: 'grey',
+                            fontSize: '16px'
+                        },
+                    },
+
+                    categories: category_splits,
+
+                },
+
+                yAxis: {
+                    // gridLineWidth: 0,
+                    gridLineColor: '#dcdcdc',
+
+                    labels: {
+                        style: {
+                            color: 'grey',
+                            fontSize: '14px'
+                        }
+                    },
+
+                    title: {
+                        text: 'Légende',
+                        style: {
+                            color: 'grey',
+                            fontSize: '16px'
+                        },
+                    }
+                },
+
+                // Styling datalabels ??
+                // https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels
+                plotOptions: {
+
+
+                    series: {
+
+                        // Lines options : solid, dash, dot, dashdot, longdash
+                        dashStyle: 'solid',
+
+                        dataLabels: {
+                            enabled: true,
+                            borderRadius: 2,
+                            y: -10,
+                            shape: 'callout'
+                        }
+                    },
+
+                },
+                series: [{
+                    data: input_fields,
+
+                    showInLegend: false,
+
+                    cursor: 'pointer',
+
+                    allowPointSelect: true,
+
+                    marker: {
+                        // symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)',
+                        fillColor: 'white',
+                        lineWidth: 2,
+                        lineColor: null,
+
+                        radius: 2.5,
+
+                        states: {
+                            select: {
+                                radius: 40,
+                                fillColor: 'transparent',
+                            }
+                        },
+
+
+                    },
+
+                    // Styling dataLabels
+                    dataLabels: {
+                        align: 'right',
+                        rotation: 35,
+                        className: 'highlight',
+                        //shape: null
+                    }
+                }]
+            }
+
+            const chart = Highcharts.chart('container1', options);
+
+
+            options.series[0].data.forEach((data, i) => {
+                const el = document.createElement('input');
+
+                el.setAttribute('class', 'notes');
+
+                el.addEventListener('change', updateColumn(i));
+
+                document.body.appendChild(el);
+
+            });
+
+            function updateColumn(i) {
+                return function(e) {
+                    const value = Number(e.target.value) || null;
+                    chart.series[0].data[i].update(value);
+
+                };
+
+            };
+
+            // Highcharts Axis update demo -> http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/axis-update/
+            // https://api.highcharts.com/class-reference/Highcharts.Axis#update
+            var opposite = true;
+
+            // Toggle yAxis position
+            $('#toggle-opposite').click(function() {
+                chart.yAxis[0].update({
+                    opposite: opposite
+                });
+                opposite = !opposite;
+            });
+
+            // Change chart direction 1
+            $('#plain').click(function() {
+                chart.update({
+                    chart: {
+                        inverted: false,
+                        polar: false
+                    },
+
+                });
+            });
+
+            // Inverted
+            $('#inverted').click(function() {
+                chart.update({
+                    chart: {
+                        inverted: true,
+                        polar: false
+                    },
+
+                });
+            });
+
+            $('#polar').click(function() {
+                chart.update({
+                    chart: {
+                        inverted: false,
+                        polar: true
+                    },
+                    title: {
+                        text: '',
+                    },
+                    xAxis: {
+                        title: {
+                            text: '',
+                        },
+                    },
+                    yAxis: {
+                        title: {
+                            text: '',
+                        },
+                    },
+                });
+            });
+
+            $('#change_line').click(function() {
+                chart.update({
+                    chart: {
+
+                        type: 'line',
+                        inverted: false,
+                        polar: false,
+
+                    },
+                });
+            });
+
+            $('#change_spline').click(function() {
+                chart.update({
+                    chart: {
+
+                        type: 'spline',
+                        inverted: false,
+                        polar: false,
+
+                    },
+                });
+            });
+
+            $('#change_areaspline').click(function() {
+                chart.update({
+                    chart: {
+
+                        type: 'areaspline',
+                        inverted: false,
+                        polar: false,
+
+                    },
+                });
+            });
+
+            $('#change_bar').click(function() {
+                chart.update({
+                    chart: {
+
+                        type: 'bar',
+                        inverted: false,
+                        polar: false,
+
+                    },
+                });
+            });
+
+            $('#change_column').click(function() {
+                chart.update({
+                    chart: {
+
+                        type: 'column',
+                        inverted: false,
+                        polar: false,
+
+                    },
+                });
+            });
+
+            $('#change_scatter').click(function() {
+                chart.update({
+                    chart: {
+
+                        type: 'scatter',
+                        inverted: false,
+                        polar: false,
+
+                    },
+                });
+            });
+
+            $('#change_columnpyramid').click(function() {
+                chart.update({
+                    chart: {
+
+                        type: 'columnpyramid',
+                        inverted: false,
+                        polar: false,
+
+                    },
+                });
+            });
+
+
+            /*
+            $('#change_bubble').click(function() {
+                chart.update({
+                    chart: {
+
+                        type: 'bubble',
+                        inverted: false,
+                        polar: false,
+
+                    },
+                });
+            });
+            */
+
+            $('#change_polygon').click(function() {
+                chart.update({
+                    chart: {
+
+                        type: 'polygon',
+                        inverted: false,
+                        polar: false,
+
+                    },
+                });
+            });
+
+            $('#refresh-all').click(function() {
+
+                const main_title_custom = document.getElementById("main-title-input").value;
+
+                chart.update({
+                    title: {
+                        text: main_title_custom,
+                    },
+                });
+
+
+                const x_axis_name = document.getElementById("x-axis-input").value;
+
+                chart.update({
+                    xAxis: {
+                        title: {
+                            text: x_axis_name,
+                        },
+                    }
+                });
+
+
+                const y_axis_name = document.getElementById("y-axis-input").value;
+
+                chart.update({
+                    yAxis: {
+                        title: {
+                            text: y_axis_name,
+                        },
+                    }
+                });
+
+
+                const categ_push_1 = document.getElementById("categ_input").value;
+
+                const categ_new_splits = categ_push_1.split(' ');
+
+                chart.update({
+                    xAxis: {
+
+                        categories: categ_new_splits,
+
+                    },
+                });
+
+
+                const value_suffix_choice = document.getElementById("value_suffix_input").value;
+
+                chart.update({
+                    tooltip: {
+                        formatter: function() {
+                            return this.x + ' : ' + this.y + ' ' + value_suffix_choice;
+                        },
+                    },
+                });
+
+
+                const colors_value = document.getElementById("colors-selector").value;
+
+                // alert(colors_value);
+
+                chart.update({
+                    plotOptions: {
+                        series: {
+                            color: colors_value,
+                        }
+                    },
+                });
+
+            });
+
+
+            // Fin de la fonction "display_array"
+        };
+
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var myChart = Highcharts.chart('container2', {
+                chart: {
+                    type: 'polygon',
+                    style: {
+                        fontFamily: 'Quicksand'
+                    }
+                },
+                navigation: {
+                    buttonOptions: {
+                        enabled: false,
+                    }
+                },
+                credits: {
+                    enabled: false,
+                },
+                title: {
+                    text: 'Editeur dynamique de graphiques'
+                },
+                xAxis: {
+
+                    labels: {
+                        style: {
+                            color: 'grey',
+                            fontSize: '14px'
+                        }
+                    },
+                    title: {
+                        text: ' ',
+                        style: {
+                            color: 'grey',
+                            fontSize: '16px',
+                        },
+                    },
+
+                    categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+
+                },
+
+
+                yAxis: {
+                    title: {
+                        enabled: false,
+                    }
+                },
+
+                colors: ['#dcdcdc'],
+
+                tooltip: {
+                    style: {
+                        color: 'grey',
+                        // fontWeight: 'bold',
+                        fontSize: '14px',
+                    },
+                    formatter: function() {
+                        return ' Bienvenue ! ';
+
+                    },
+
+                },
+                series: [{
+                    showInLegend: false,
+                    cursor: 'pointer',
+                    allowPointSelect: true,
+                    data: [2, 1, 3, 5, 4, 8, 7],
+                    marker: {
+                        // symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)',
+                        fillColor: 'white',
+                        lineWidth: 2,
+                        lineColor: null,
+
+                        radius: 2.5,
+
+                        states: {
+                            select: {
+                                radius: 40,
+                                fillColor: 'transparent',
+                            }
+                        },
+
+
+                    },
+
+
+
+                    // Styling dataLabels
+                    dataLabels: {
+                        align: 'right',
+                        rotation: 25,
+                        className: 'highlight',
+                        //shape: null
+                    }
+                }]
+            });
+        });
+
+    </script>
+
+    <!-- Script Export format JPEG -->
+    <!-- <script src="dom-to-image.js"></script> -->
+
+    <script>
+        /*
+        $(document).ready(function() {
+            $(".button-export").on("click", function() {
+
+                domtoimage.toJpeg(document.getElementById('containerDOM'), {
+                        quality: 0.95
+                    })
+                    .then(function(dataUrl) {
+                        var link = document.createElement('a');
+                        link.download = 'my-chart-name.jpeg';
+                        link.href = dataUrl;
+                        link.click();
+                    });
+
+            })
+
+        });
+*/
+
+    </script>
+
+</body>
+
+</html>
