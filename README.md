@@ -1,4 +1,4 @@
-Editeur dynamique de graphiques
+Editeur dynamique de graphiques Highcharts
 
 Démo => http://mycharts.planetcode.fr
 
